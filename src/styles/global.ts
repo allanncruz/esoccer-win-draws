@@ -22,6 +22,10 @@ const GlobalStyle = createGlobalStyle<{}>`
 
   a{
     text-decoration: none;
+
+    &:hover{
+      text-decoration: underline;
+    }
   }
 
   body {
