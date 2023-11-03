@@ -8,6 +8,7 @@ export const Nav = styled.nav`
   width: 100%;
   top: 0;
   left: 0;
+  z-index: 10;
 
     a {
       margin: 0 15px;
