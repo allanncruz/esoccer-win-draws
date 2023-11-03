@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Container } from "../../styles/style";
+import { ResultsBlocks } from "./style";
 
 type Data = {
   result: {
@@ -21,35 +22,52 @@ const initialResults = "https://hr.gtleagues.com/api/fixtures?kickoff=between%3A
 
 export default function GtLeague() {
   const [post, setPost] = useState<Data[]>([]);
+  const [isloading, setIsLoading] = useState(false);
+
+  async function resultData() {
+    setIsLoading(true);
+    try {
+      axios.get(initialResults).then((response) => {
+        setPost(response.data);
+      });
+
+ 
+      // const homeScore = post?.map(item => item.result.stats.home_score)
+      // const awayScore = post?.map(item => item.result.stats.away_score)
+
+      // console.log("homeScore", homeScore) 
+
+      // console.log("awayScore", awayScore)
+
+    } catch (error) {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
-    axios.get(initialResults).then((response) => {
-      setPost(response.data);
-    });
- 
-    const homeScore = post?.map(item => item.result.stats.home_score)
-    const awayScore = post?.map(item => item.result.stats.away_score)
-
-    console.log("homeScore", homeScore) 
-
-    console.log("awayScore", awayScore)
+    resultData()
 
   }, []);
 
   return (
     <Container>
-      <>
-        {post?.map((item) => (
-          <div key={item.id}>
-            <label htmlFor="homeScore">Home score</label>
-            <p id="homeScore">{item.result.stats.home_score}</p>
+      {isloading ? (
+        <span>loading</span>
+      ) : (
+        <>
+          {post?.map((item) => (
+            <ResultsBlocks key={item.id}>
+              <label htmlFor="homeScore">Home score</label>
+              <p id="homeScore">{item.result.stats.home_score}</p>
 
-            <label htmlFor="awayScore">Away dcore</label>
-            <p id="awayScore">{item.result.stats.away_score}</p>
-          </div>
-        )
+              <label htmlFor="awayScore">Away dcore</label>
+              <p id="awayScore">{item.result.stats.away_score}</p>
+            </ResultsBlocks>
+          )
+        )}
+        </>
       )}
-    </>
+      
     </Container>
   );
 }
