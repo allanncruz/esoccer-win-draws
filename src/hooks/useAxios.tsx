@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+
 const useAxios = (configObg: any) => {
     const {
         axiosInstance,
@@ -23,9 +24,9 @@ const useAxios = (configObg: any) => {
           });
           console.log(res)
           setResponse(res.data)
-        } catch (err) {
-            console.log(err)
-            setError(err)
+        } catch (err: any) {
+            console.log(err.message)
+            setError(err.message)
         } finally {
           setLoading(false)
         }
