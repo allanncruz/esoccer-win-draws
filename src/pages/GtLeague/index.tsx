@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Container } from "../../styles/style";
-import { ResultsBlocks, ResultsGoals } from "./style";
+import { ResultsBlocks, ResultsGoals, ResultsShield } from "./style";
 
 
+const initialResults = "https://hr.gtleagues.com/api/fixtures?kickoff=between%3A2023-11-04T03%3A00%3A00.000Z%2C2023-11-05T02%3A59%3A59.999Z&limit=50&offset=0&sort=-kickoff%2C-matchNr&status=in%3A3%2C5%2C4%2C6&xtc=true";
 
-type Teams = {
+type Participants = {
   participant: {
     team :{
+      crest: any,
       name: string
+    }
+    player :{
+      nickname: string
     }
   }
 };
@@ -20,14 +25,10 @@ interface Data {
       home_score: number
     }
   },
-  participants: Teams;
+  participants: Participants[];
   channel: string;
   id: number
 };
-
-const initialResults = "https://hr.gtleagues.com/api/fixtures?kickoff=between%3A2023-11-04T03%3A00%3A00.000Z%2C2023-11-05T02%3A59%3A59.999Z&limit=50&offset=0&sort=-kickoff%2C-matchNr&status=in%3A3%2C5%2C4%2C6&xtc=true";
-
-
 
 export default function GtLeague() {
   const [post, setPost] = useState<Data[]>([]);
@@ -41,7 +42,7 @@ export default function GtLeague() {
       });
       
       
-      console.log("response.data", post)
+      console.log("response.datas", post)
       
     } catch (error) {}
   }
@@ -58,16 +59,26 @@ export default function GtLeague() {
       ) : (
         <>
           {post?.map((item) => (
-            <ResultsBlocks key={item.id}>
-              <label htmlFor="homeScore">
-              {item.participants?.map((teams: Teams) => (
-                <>{teams.participant.team.name}</>
-              ))}
-              </label>
+            <ResultsBlocks 
+              key={item.id} 
+              className={(item.result.stats.home_score === item.result.stats.home_score) && 'empate'}>
+              <div>
+                <ResultsShield
+                  src={item.participants[0].participant.team.crest} 
+                  alt={item.participants[0].participant.team.name} />
+                <label htmlFor="homeScore">{item.participants[0].participant.team.name}</label>
+                <b>{item.participants[0].participant.player.nickname}</b>
+              </div>
               <ResultsGoals id="homeScore" children={item.result.stats.home_score} />
               X
               <ResultsGoals id="awayScore" children={item.result.stats.away_score} />
-              <label htmlFor="awayScore">Away score</label>
+              <div>
+                <ResultsShield
+                  src={item.participants[1].participant.team.crest} 
+                  alt={item.participants[1].participant.team.name} />
+                <label htmlFor="awayScore">{item.participants[1].participant.team.name}</label>
+                <b>{item.participants[1].participant.player.nickname}</b>
+              </div>
             </ResultsBlocks>
           )
         )}
